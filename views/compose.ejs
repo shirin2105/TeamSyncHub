@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-gray: #1f2937;
+            --secondary-gray: #374151;
+            --light-gray: #f9fafb;
+            --medium-gray: #6b7280;
+            --border-gray: #e5e7eb;
+            --hover-gray: #f3f4f6;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            height: 64px;
+            border: none;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            border: none;
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            width: 280px;
+            padding: 24px 0;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: #d1d5db;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-radius: 0;
+            margin: 2px 12px;
+            width: calc(100% - 24px);
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px 16px 0 0 !important;
+            font-weight: 600;
+            padding: 20px 24px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-light {
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid var(--border-gray);
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border-gray);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-gray) 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-area:hover {
+            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, var(--hover-gray) 0%, #ffffff 100%);
+        }
+        
+        .file-list {
+            margin-top: 16px;
+        }
+        
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-gray) 100%);
+            border: 1px solid var(--border-gray);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .text-muted {
+            color: var(--text-light) !important;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 240px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+                padding: 20px;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <button class="navbar-toggler d-md-none" type="button" onclick="toggleSidebar()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <% if (user) { %>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i><%= user.name || user.email %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu-section">
+            <a href="/" class="menu-item">
+                <i class="fas fa-inbox"></i>Hộp thư đến
+            </a>
+            <a href="/sent" class="menu-item">
+                <i class="fas fa-paper-plane"></i>Thư đã gửi
+            </a>
+            <a href="/compose" class="menu-item active">
+                <i class="fas fa-edit"></i>Soạn thư mới
+            </a>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 16px 24px;"></div>
+            <button class="menu-item" onclick="resetDatabase()">
+                <i class="fas fa-database"></i>Làm mới dữ liệu
+            </button>
+            <button class="menu-item" onclick="checkProviderStatus()">
+                <i class="fas fa-server"></i>Trạng thái hệ thống
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="form-container">
+            <h2><i class="fas fa-paper-plane me-2"></i><%= title %></h2>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <form action="/send" method="POST" enctype="multipart/form-data" id="emailForm">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="to" class="form-label">
+                                <i class="fas fa-user me-1"></i>Người nhận *
+                            </label>
+                            <input type="email" class="form-control" id="to" name="to" 
+                                   value=""
+                                   placeholder="example@domain.com (có thể nhập nhiều email cách nhau bằng dấu phẩy)" 
+                                   required>
+                            <div class="form-text">Nhập nhiều email cách nhau bằng dấu phẩy</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">
+                                <i class="fas fa-tag me-1"></i>Chủ đề *
+                            </label>
+                            <input type="text" class="form-control" id="subject" name="subject" 
+                                   value=""
+                                   placeholder="Nhập chủ đề email" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="body" class="form-label">
+                                <i class="fas fa-edit me-1"></i>Nội dung email *
+                            </label>
+                            <textarea class="form-control" id="body" name="body" rows="10" 
+                                      placeholder="Nhập nội dung email..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-paperclip me-1"></i>File đính kèm
+                            </label>
+                            <div class="file-upload-area" onclick="document.getElementById('attachments').click()">
+                                <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                <p class="mb-0">Nhấn để chọn file hoặc kéo thả file vào đây</p>
+                                <small class="text-muted">Hỗ trợ tất cả các loại file</small>
+                            </div>
+                            <input type="file" class="form-control d-none" id="attachments" name="attachments" multiple>
+                            <div class="file-list" id="fileList"></div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Hủy
+                            </a>
+                            <button type="submit" class="btn btn-primary" id="sendButton">
+                                <i class="fas fa-paper-plane me-1"></i>Gửi Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        async function checkEmails() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang kiểm tra...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/check-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Đã kiểm tra email thành công!');
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Lỗi khi kiểm tra email');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function resetDatabase() {
+            if (confirm('Bạn có chắc chắn muốn reset database? Tất cả dữ liệu sẽ bị xóa!')) {
+                try {
+                    const response = await fetch('/reset-database', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Database đã được reset thành công!');
+                        window.location.href = '/';
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Lỗi khi reset database');
+                }
+            }
+        }
+
+        function checkProviderStatus() {
+            window.location.href = '/provider-status';
+        }
+
+        const attachmentsInput = document.getElementById('attachments');
+        const fileList = document.getElementById('fileList');
+        const emailForm = document.getElementById('emailForm');
+        const sendButton = document.getElementById('sendButton');
+
+        attachmentsInput.addEventListener('change', function(e) {
+            displayFileList(e.target.files);
+        });
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.file-upload-area');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#007bff';
+            uploadArea.style.backgroundColor = '#e3f2fd';
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#dee2e6';
+            uploadArea.style.backgroundColor = '#f8f9fa';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#dee2e6';
+            uploadArea.style.backgroundColor = '#f8f9fa';
+            
+            const files = e.dataTransfer.files;
+            attachmentsInput.files = files;
+            displayFileList(files);
+        });
+
+        function displayFileList(files) {
+            fileList.innerHTML = '';
+            
+            if (files.length === 0) return;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                fileItem.innerHTML = `
+                    <div>
+                        <i class="fas fa-file me-2"></i>
+                        <span>${file.name}</span>
+                        <small class="text-muted ms-2">(${formatFileSize(file.size)})</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                fileList.appendChild(fileItem);
+            }
+        }
+
+        function removeFile(index) {
+            const dt = new DataTransfer();
+            const files = attachmentsInput.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                if (i !== index) {
+                    dt.items.add(files[i]);
+                }
+            }
+            
+            attachmentsInput.files = dt.files;
+            displayFileList(dt.files);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Form submission handling
+        emailForm.addEventListener('submit', function(e) {
+            sendButton.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang gửi...';
+            sendButton.disabled = true;
+        });
+
+        // Force clear any existing email drafts immediately to prevent unwanted defaults
+        localStorage.removeItem('emailDraft');
+        
+        // Also clear any other email-related localStorage items
+        Object.keys(localStorage).forEach(key => {
+            if (key.includes('email') || key.includes('draft') || key.includes('compose')) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // Only set values from URL parameters (for reply functionality)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('to')) {
+            document.getElementById('to').value = urlParams.get('to');
+        }
+        if (urlParams.get('subject')) {
+            document.getElementById('subject').value = urlParams.get('subject');
+        }
+        if (urlParams.get('body')) {
+            document.getElementById('body').value = urlParams.get('body');
+        }
+
+        // Auto-save draft functionality with better logic
+        let saveTimeout;
+        document.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    // Only save draft if user has actually typed something meaningful
+                    const toValue = document.getElementById('to').value.trim();
+                    const subjectValue = document.getElementById('subject').value.trim();
+                    const bodyValue = document.getElementById('body').value.trim();
+                    
+                    if (toValue || subjectValue || bodyValue) {
+                        const formData = {
+                            to: toValue,
+                            subject: subjectValue,
+                            body: bodyValue
+                        };
+                        localStorage.setItem('emailDraft', JSON.stringify(formData));
+                    } else {
+                        // Clear draft if all fields are empty
+                        localStorage.removeItem('emailDraft');
+                    }
+                }, 2000); // Increased delay to 2 seconds
+            });
+        });
+
+        // Load draft on page load only if no pre-filled data exists
+        window.addEventListener('load', function() {
+            // Force clear any existing drafts first to prevent unwanted default values
+            localStorage.removeItem('emailDraft');
+            
+            // Check if form already has values from query parameters (like reply functionality)
+            const hasPrefilledData = document.getElementById('to').value || 
+                                    document.getElementById('subject').value || 
+                                    document.getElementById('body').value;
+            
+            // Only load draft if there's no pre-filled data AND user explicitly wants to restore
+            // For now, we'll disable auto-loading to prevent unwanted defaults
+            console.log('Form loaded - Pre-filled data:', hasPrefilledData ? 'Yes' : 'No');
+        });
+
+        // Function to clear draft
+        function clearDraft() {
+            localStorage.removeItem('emailDraft');
+        }
+
+        // Clear draft on successful send or when navigating away from compose
+        emailForm.addEventListener('submit', function() {
+            clearDraft();
+        });
+
+        // Clear draft when user manually clears all fields
+        function checkAndClearDraft() {
+            const toValue = document.getElementById('to').value.trim();
+            const subjectValue = document.getElementById('subject').value.trim();
+            const bodyValue = document.getElementById('body').value.trim();
+            
+            if (!toValue && !subjectValue && !bodyValue) {
+                clearDraft();
+            }
+        }
+    </script>
+</body>
+</html>

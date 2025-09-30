@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-gray: #1f2937;
+            --secondary-gray: #374151;
+            --light-gray: #f9fafb;
+            --medium-gray: #6b7280;
+            --border-gray: #e5e7eb;
+            --hover-gray: #f3f4f6;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            padding-top: 64px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            height: 64px;
+            border: none;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .navbar-brand i {
+            color: #fbbf24;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            border: none;
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            width: 280px;
+            padding: 24px 0;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: #d1d5db;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-radius: 0;
+            margin: 2px 12px;
+            width: calc(100% - 24px);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        /* Email Detail Specific Styles */
+        .email-header {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-gray);
+        }
+
+        .email-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .badge-incoming {
+            background: linear-gradient(135deg, var(--success-green), #16a34a);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+        }
+
+        .badge-outgoing {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border: none;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border: 1px solid var(--border-gray);
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: var(--text-dark);
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .message-id {
+            font-family: 'Courier New', monospace;
+            background: var(--light-gray);
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background: white;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+        }
+
+        .card-header h4 {
+            color: white;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .content-card {
+            margin-bottom: 2rem;
+        }
+
+        .email-content-modern {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .html-content {
+            color: var(--text-dark);
+        }
+
+        .html-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .text-content {
+            white-space: pre-wrap;
+            color: var(--text-dark);
+            background: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .empty-content {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+        }
+
+        .attachment-section {
+            margin-bottom: 2rem;
+        }
+
+        .attachment-card-modern {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .attachment-card-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .attachment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .file-icon {
+            padding: 0.75rem;
+            background: var(--light-gray);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .attachment-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .attachment-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-type, .file-size {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .attachment-footer {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            background: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid var(--border-gray);
+            color: var(--text-light);
+            background: transparent;
+        }
+
+        .btn-outline-secondary:hover {
+            background: var(--text-light);
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .badge {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+        .bg-primary {
+            background: var(--accent-blue) !important;
+        }
+
+        .bg-secondary {
+            background: var(--text-light) !important;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+            color: var(--success-green);
+            border-left: 4px solid var(--success-green);
+        }
+
+        .alert-info {
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+            color: var(--accent-blue);
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fef2f2, #fef1f1);
+            color: var(--danger-red);
+            border-left: 4px solid var(--danger-red);
+        }
+
+        .dropdown-menu {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            padding: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background: var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid var(--border-gray);
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+            .email-header {
+                padding: 1.5rem;
+            }
+            .email-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .email-title {
+                font-size: 1.25rem;
+            }
+        }
+
+        .text-muted {
+            color: var(--text-light) !important;
+        }
+
+        .text-success {
+            color: var(--success-green) !important;
+        }
+
+        .text-danger {
+            color: var(--danger-red) !important;
+        }
+
+        .text-info {
+            color: var(--accent-blue) !important;
+        }
+
+        .text-warning {
+            color: var(--warning-yellow) !important;
+        }
+
+        .text-primary {
+            color: var(--accent-blue) !important;
+        }
+
+        .text-secondary {
+            color: var(--text-light) !important;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+        }
+
+        /* Discussions Styles */
+        .discussion-item {
+            border-bottom: 1px solid var(--border-gray);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .discussion-item:last-child {
+            border-bottom: none;
+        }
+
+        .discussion-message {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .discussion-item .dropdown-toggle {
+            border: none;
+            background: none;
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .discussion-item .dropdown-toggle:hover {
+            color: var(--text-dark);
+        }
+
+        #discussionMessage {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        #discussionMessage:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        /* Task Assignment Styles */
+        .task-status-badge {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .task-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .task-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .task-assignment-form {
+            background: var(--light-gray);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px dashed var(--border-gray);
+        }
+
+        .task-assignment-form .form-select {
+            border: 2px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .task-assignment-form .form-select:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+
+        .task-status-display {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .bg-warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a) !important;
+            color: #92400e !important;
+        }
+
+        .bg-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
+            color: #065f46 !important;
+        }
+
+        .bg-secondary {
+            background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+            color: #475569 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <button class="navbar-toggler d-md-none" type="button" onclick="toggleSidebar()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <% if (user) { %>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i><%= user.name || user.email %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu-section">
+            <a href="/" class="menu-item">
+                <i class="fas fa-inbox"></i>Hộp thư đến
+            </a>
+            <a href="/sent" class="menu-item">
+                <i class="fas fa-paper-plane"></i>Thư đã gửi
+            </a>
+            <a href="/compose" class="menu-item">
+                <i class="fas fa-edit"></i>Soạn thư mới
+            </a>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 16px 24px;"></div>
+            <button class="menu-item" onclick="resetDatabase()">
+                <i class="fas fa-database"></i>Làm mới dữ liệu
+            </button>
+            <button class="menu-item" onclick="checkProviderStatus()">
+                <i class="fas fa-server"></i>Trạng thái hệ thống
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i><%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10">
+                <!-- Email Header -->
+                <div class="email-header">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-3">
+                                <% if (email.email_type === 'incoming') { %>
+                                    <span class="badge badge-incoming me-3">
+                                        <i class="fas fa-arrow-down me-1"></i>Email đến
+                                    </span>
+                                <% } else { %>
+                                    <span class="badge badge-outgoing me-3">
+                                        <i class="fas fa-arrow-up me-1"></i>Email đi
+                                    </span>
+                                <% } %>
+                                <small class="text-muted">
+                                    <% if (email.email_type === 'incoming') { %>
+                                        <%= new Date(email.received_datetime).toLocaleDateString('vi-VN', {
+                                            weekday: 'long',
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) %>
+                                    <% } else { %>
+                                        <%= new Date(email.sent_datetime).toLocaleDateString('vi-VN', {
+                                            weekday: 'long',
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) %>
+                                    <% } %>
+                                </small>
+                            </div>
+                            <h1 class="email-title"><%= email.subject || 'Không có tiêu đề' %></h1>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <% 
+                                // Determine reply recipient and subject
+                                let replyTo = '';
+                                let replySubject = '';
+                                
+                                if (email.email_type === 'incoming') {
+                                    replyTo = email.sender || '';
+                                } else {
+                                    replyTo = email.recipient || '';
+                                }
+                                
+                                // Format subject with "Re: " prefix if not already present
+                                const originalSubject = email.subject || 'Không có tiêu đề';
+                                if (originalSubject.toLowerCase().startsWith('re:')) {
+                                    replySubject = originalSubject;
+                                } else {
+                                    replySubject = 'Re: ' + originalSubject;
+                                }
+                                
+                                // URL encode the parameters
+                                const encodedTo = encodeURIComponent(replyTo);
+                                const encodedSubject = encodeURIComponent(replySubject);
+                            %>
+                            <a href="/compose?to=<%= encodedTo %>&subject=<%= encodedSubject %>" class="btn btn-primary">
+                                <i class="fas fa-reply me-1"></i>Trả lời
+                            </a>
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-forward me-1"></i>Chuyển tiếp
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Email Info Cards -->
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <% if (email.email_type === 'incoming') { %>
+                                        <i class="fas fa-user me-1"></i>Người gửi
+                                    <% } else { %>
+                                        <i class="fas fa-user me-1"></i>Người nhận
+                                    <% } %>
+                                </div>
+                                <div class="info-value">
+                                    <% if (email.email_type === 'incoming') { %>
+                                        <%= email.sender || 'Không xác định' %>
+                                    <% } else { %>
+                                        <%= email.recipient || 'Không xác định' %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-calendar me-1"></i>Thời gian
+                                </div>
+                                <div class="info-value">
+                                    <% if (email.email_type === 'incoming') { %>
+                                        <%= new Date(email.received_datetime).toLocaleDateString('vi-VN', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) %>
+                                    <% } else { %>
+                                        <%= new Date(email.sent_datetime).toLocaleDateString('vi-VN', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) %>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-paperclip me-1"></i>Đính kèm
+                                </div>
+                                <div class="info-value">
+                                    <% if (email.attachments && email.attachments.length > 0) { %>
+                                        <span class="text-success">
+                                            <i class="fas fa-check me-1"></i>
+                                            <%= email.attachments.length %> file
+                                        </span>
+                                    <% } else { %>
+                                        <span class="text-muted">
+                                            <i class="fas fa-times me-1"></i>
+                                            Không có
+                                        </span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="info-item">
+                                <div class="info-label">
+                                    <i class="fas fa-envelope me-1"></i>Message ID
+                                </div>
+                                <div class="info-value">
+                                    <span class="message-id">
+                                        <%= email.message_id ? email.message_id.substring(0, 20) + '...' : 'N/A' %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Content -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card content-card">
+                            <div class="card-header">
+                                <h4 class="mb-0">
+                                    <i class="fas fa-envelope-open me-2"></i>Nội dung email
+                                </h4>
+                            </div>
+                            <div class="card-body">
+                                <% if (email.body_content) { %>
+                                    <div class="email-content-modern">
+                                        <% 
+                                        // Kiểm tra xem content có phải HTML không
+                                        const isHTML = email.body_content.includes('<') && email.body_content.includes('>');
+                                        %>
+                                        <% if (isHTML) { %>
+                                            <div class="html-content">
+                                                <%- email.body_content %>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="text-content">
+                                                <%= email.body_content %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                <% } else { %>
+                                    <div class="empty-content">
+                                        <i class="fas fa-envelope-open fa-3x mb-3"></i>
+                                        <h5>Không có nội dung email</h5>
+                                        <p class="text-muted">Email này không chứa nội dung văn bản</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attachments -->
+                <% if (email.attachments && email.attachments.length > 0) { %>
+                    <div class="card attachment-section">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="fas fa-paperclip me-2"></i>File đính kèm 
+                                <span class="badge bg-primary ms-2"><%= email.attachments.length %></span>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <% email.attachments.forEach(function(attachment, index) { %>
+                                    <div class="col-lg-6 col-xl-4">
+                                        <div class="attachment-card-modern">
+                                            <div class="attachment-header">
+                                                <% 
+                                                    let fileIcon = 'fas fa-file';
+                                                    let iconColor = 'text-secondary';
+                                                    const filename = attachment.filename;
+                                                    const ext = filename.split('.').pop().toLowerCase();
+                                                    
+                                                    // Images
+                                                    if (['jpg','jpeg','png','gif','bmp','webp','svg','ico','tiff','tif'].includes(ext)) {
+                                                        fileIcon = 'fas fa-image';
+                                                        iconColor = 'text-success';
+                                                    } 
+                                                    // PDF
+                                                    else if (['pdf'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-pdf';
+                                                        iconColor = 'text-danger';
+                                                    } 
+                                                    // Audio
+                                                    else if (['mp3','wav','ogg','m4a','aac','wma','flac'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-audio';
+                                                        iconColor = 'text-info';
+                                                    } 
+                                                    // Video
+                                                    else if (['mp4','webm','avi','mov','wmv','flv','mkv','m4v'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-video';
+                                                        iconColor = 'text-warning';
+                                                    } 
+                                                    // Microsoft Office
+                                                    else if (['docx','doc'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-word';
+                                                        iconColor = 'text-primary';
+                                                    }
+                                                    else if (['xlsx','xls'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-excel';
+                                                        iconColor = 'text-success';
+                                                    }
+                                                    else if (['pptx','ppt'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-powerpoint';
+                                                        iconColor = 'text-warning';
+                                                    }
+                                                    // Code files
+                                                    else if (['js','ts','jsx','tsx','vue','php','py','java','c','cpp','h','hpp'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-code';
+                                                        iconColor = 'text-info';
+                                                    }
+                                                    // Text/Data files
+                                                    else if (['txt','md','log','csv','json','xml','html','htm','css','yaml','yml','ini','conf','config','gitignore','env'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-alt';
+                                                        iconColor = 'text-secondary';
+                                                    }
+                                                    // Archive files
+                                                    else if (['zip','rar','7z','tar','gz','bz2'].includes(ext)) {
+                                                        fileIcon = 'fas fa-file-archive';
+                                                        iconColor = 'text-dark';
+                                                    }
+                                                %>
+                                                <div class="file-icon">
+                                                    <i class="<%= fileIcon %> fa-2x <%= iconColor %>"></i>
+                                                </div>
+                                                <div class="file-actions">
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-link btn-sm" data-bs-toggle="dropdown">
+                                                            <i class="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-end">
+                                                            <li>
+                                                                <button class="dropdown-item" onclick="previewFile('<%= email.id %>', '<%= attachment.filename %>')">
+                                                                    <i class="fas fa-eye me-2"></i>Xem trước
+                                                                </button>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" href="/download/<%= email.id %>/<%= encodeURIComponent(attachment.filename) %>">
+                                                                    <i class="fas fa-download me-2"></i>Tải xuống
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="attachment-body">
+                                                <h6 class="attachment-name" title="<%= attachment.filename %>">
+                                                    <%= (attachment.filename).length > 25 ? 
+                                                        (attachment.filename).substring(0, 25) + '...' : 
+                                                        (attachment.filename) 
+                                                    %>
+                                                </h6>
+                                                <div class="attachment-meta">
+                                                    <span class="file-type">
+                                                        <i class="fas fa-tag me-1"></i>
+                                                        <%= attachment.content_type.split('/')[1].toUpperCase() %>
+                                                    </span>
+                                                    <% if (attachment.file_size) { %>
+                                                        <span class="file-size">
+                                                            <i class="fas fa-weight me-1"></i>
+                                                            <%= attachment.file_size < 1024 ? Math.round(attachment.file_size) + ' B' :
+                                                                attachment.file_size < 1024*1024 ? Math.round(attachment.file_size / 1024) + ' KB' :
+                                                                Math.round(attachment.file_size / (1024*1024)) + ' MB' %>
+                                                        </span>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                            <div class="attachment-footer">
+                                                <button class="btn btn-primary btn-sm" 
+                                                        onclick="previewFile('<%= email.id %>', '<%= attachment.filename %>')">
+                                                    <i class="fas fa-eye me-1"></i>Xem trước
+                                                </button>
+                                                <a class="btn btn-outline-secondary btn-sm" 
+                                                   href="/download/<%= email.id %>/<%= encodeURIComponent(attachment.filename) %>">
+                                                    <i class="fas fa-download me-1"></i>Tải xuống
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="card attachment-section">
+                        <div class="card-body text-center py-4">
+                            <i class="fas fa-paperclip fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Không có file đính kèm</h5>
+                            <p class="text-muted mb-0">Email này không chứa file đính kèm nào</p>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Task Assignment Section (chỉ cho incoming emails) -->
+                <% if (email.email_type === 'incoming' && user) { %>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Quản lý nhiệm vụ
+                                <% if (taskInfo && taskInfo.isAssigned) { %>
+                                    <span class="badge <%= taskInfo.status === 'completed' ? 'bg-success' : taskInfo.status === 'in_progress' ? 'bg-warning' : 'bg-secondary' %> ms-2">
+                                        <%= taskInfo.status === 'completed' ? 'Hoàn thành' : taskInfo.status === 'in_progress' ? 'Đang thực hiện' : 'Chờ xử lý' %>
+                                    </span>
+                                <% } %>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <% if (taskInfo && taskInfo.isAssigned) { %>
+                                <!-- Task Status Display -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="info-label">
+                                                <i class="fas fa-user me-1"></i>Người được giao
+                                            </div>
+                                            <div class="info-value">
+                                                <%= taskInfo.assignedTo || 'Không xác định' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="info-item">
+                                            <div class="info-label">
+                                                <i class="fas fa-user-tie me-1"></i>Người giao việc
+                                            </div>
+                                            <div class="info-value">
+                                                <%= taskInfo.assignedBy || 'Không xác định' %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Task Actions -->
+                                <div class="d-flex flex-wrap gap-2">
+                                    <% if (user.role === 'Manager') { %>
+                                        <!-- Manager Actions -->
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="unassignTask()">
+                                            <i class="fas fa-times me-1"></i>Hủy giao việc
+                                        </button>
+                                        <% if (taskInfo.status !== 'completed') { %>
+                                            <div class="dropdown">
+                                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <i class="fas fa-exchange-alt me-1"></i>Giao lại
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <% if (allUsers && allUsers.length > 0) { %>
+                                                        <% allUsers.forEach(function(availableUser) { %>
+                                                            <% if (availableUser.id !== taskInfo.assignedToId) { %>
+                                                                <li><a class="dropdown-item" href="#" onclick="assignTask('<%= availableUser.id %>')">
+                                                                    <%= availableUser.name %>
+                                                                </a></li>
+                                                            <% } %>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </ul>
+                                            </div>
+                                        <% } %>
+                                    <% } %>
+                                    
+                                    <% if (user.id == taskInfo.assignedToId) { %>
+                                        <!-- Assigned User Actions -->
+                                        <% if (taskInfo.status === 'pending') { %>
+                                            <button class="btn btn-warning btn-sm" onclick="startTask()">
+                                                <i class="fas fa-play me-1"></i>Bắt đầu nhiệm vụ
+                                            </button>
+                                        <% } else if (taskInfo.status === 'in_progress') { %>
+                                            <button class="btn btn-success btn-sm" onclick="completeTask()">
+                                                <i class="fas fa-check me-1"></i>Hoàn thành nhiệm vụ
+                                            </button>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <!-- No Task Assigned -->
+                                <div class="text-center py-3">
+                                    <i class="fas fa-tasks fa-2x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Chưa có nhiệm vụ được giao</h5>
+                                    <% if (user.role === 'Manager') { %>
+                                        <p class="text-muted mb-3">Chọn nhân viên để giao nhiệm vụ xử lý email này</p>
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-6">
+                                                <select class="form-select" id="assignUserSelect">
+                                                    <option value="">Chọn nhân viên...</option>
+                                                    <% if (allUsers && allUsers.length > 0) { %>
+                                                        <% allUsers.forEach(function(availableUser) { %>
+                                                            <% if (availableUser.role !== 'Manager') { %>
+                                                                <option value="<%= availableUser.id %>"><%= availableUser.name %></option>
+                                                            <% } %>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </select>
+                                                <button class="btn btn-primary mt-2" onclick="assignTask()">
+                                                    <i class="fas fa-user-plus me-1"></i>Giao nhiệm vụ
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <p class="text-muted">Chỉ Manager mới có thể giao nhiệm vụ</p>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Discussions Section (chỉ cho incoming emails) -->
+                <% if (email.email_type === 'incoming' && user) { %>
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0">
+                                <i class="fas fa-comments me-2"></i>Thảo luận nội bộ
+                                <% if (discussions && discussions.length > 0) { %>
+                                    <span class="badge bg-primary ms-2"><%= discussions.length %></span>
+                                <% } %>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Existing discussions -->
+                            <div id="discussionsList">
+                                <% if (discussions && discussions.length > 0) { %>
+                                    <% discussions.forEach(function(discussion) { %>
+                                        <div class="discussion-item border-bottom pb-3 mb-3" data-id="<%= discussion.id %>">
+                                            <div class="d-flex align-items-start">
+                                                <div class="me-3">
+                                                    <% if (discussion.avatar_url) { %>
+                                                        <img src="<%= discussion.avatar_url %>" class="rounded-circle" width="40" height="40" alt="<%= discussion.user_name %>">
+                                                    <% } else { %>
+                                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                            <span class="text-white fw-bold"><%= discussion.user_name.charAt(0).toUpperCase() %></span>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <strong><%= discussion.user_name %></strong>
+                                                            <small class="text-muted ms-2">
+                                                                <%= new Date(discussion.created_at).toLocaleString('vi-VN') %>
+                                                                <% if (discussion.updated_at && discussion.updated_at !== discussion.created_at) { %>
+                                                                    <span class="text-info">(đã chỉnh sửa)</span>
+                                                                <% } %>
+                                                            </small>
+                                                        </div>
+                                                        <% if (discussion.user_id === user.id || user.role === 'Manager') { %>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-link btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                                                    <i class="fas fa-ellipsis-v"></i>
+                                                                </button>
+                                                                <ul class="dropdown-menu">
+                                                                    <% if (discussion.user_id === user.id) { %>
+                                                                        <li><button class="dropdown-item edit-discussion-btn" 
+                                                                                data-id="<%= discussion.id %>" 
+                                                                                data-message="<%= discussion.message.replace(/"/g, '&quot;') %>">
+                                                                            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                                                        </button></li>
+                                                                    <% } %>
+                                                                    <li><button class="dropdown-item text-danger delete-discussion-btn" 
+                                                                            data-id="<%= discussion.id %>">
+                                                                        <i class="fas fa-trash me-2"></i>Xóa
+                                                                    </button></li>
+                                                                </ul>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                    <div class="discussion-message mt-2">
+                                                        <%= discussion.message %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <p class="text-muted text-center py-3">
+                                        <i class="fas fa-comments fa-2x mb-2 d-block"></i>
+                                        Chưa có thảo luận nào. Hãy là người đầu tiên bắt đầu cuộc thảo luận!
+                                    </p>
+                                <% } %>
+                            </div>
+
+                            <!-- Add new discussion -->
+                            <div class="mt-4 pt-3 border-top">
+                                <form id="discussionForm">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-3">
+                                            <% if (user.avatar_url) { %>
+                                                <img src="<%= user.avatar_url %>" class="rounded-circle" width="40" height="40" alt="<%= user.name || user.email %>">
+                                            <% } else { %>
+                                                <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                    <span class="text-white fw-bold"><%= (user.name || user.email).charAt(0).toUpperCase() %></span>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <textarea 
+                                                id="discussionMessage" 
+                                                class="form-control" 
+                                                rows="3" 
+                                                placeholder="Nhập thảo luận của bạn... (Ctrl+Enter để gửi)"
+                                                required></textarea>
+                                            <div class="d-flex justify-content-end mt-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-paper-plane me-1"></i>Gửi
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-eye me-2"></i>Xem trước file
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-light btn-sm" onclick="toggleFullscreen()" title="Chế độ toàn màn hình">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id="previewContent" class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle sidebar for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // Preview file function
+        function previewFile(emailId, filename) {
+            const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+            const content = document.getElementById('previewContent');
+            
+            content.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Đang tải...</span></div>';
+            modal.show();
+            
+            fetch(`/preview-attachment/${emailId}/${encodeURIComponent(filename)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.type === 'image') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <img src="${data.url}" class="img-fluid rounded shadow" alt="${filename}" style="max-height: 70vh;">
+                                    <p class="mt-3 text-muted">📷 ${filename}</p>
+                                </div>`;
+                        } else if (data.type === 'pdf') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <iframe src="${data.url}" width="100%" height="700px" frameborder="0" class="rounded shadow"></iframe>
+                                    <p class="mt-3 text-muted">📄 ${filename}</p>
+                                </div>`;
+                        } else if (data.type === 'video') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <video controls class="rounded shadow" style="max-width: 100%; max-height: 70vh;">
+                                        <source src="${data.url}" type="video/mp4">
+                                        <source src="${data.url}" type="video/webm">
+                                        <source src="${data.url}" type="video/ogg">
+                                        Trình duyệt của bạn không hỗ trợ video HTML5.
+                                    </video>
+                                    <p class="mt-3 text-muted">🎬 ${filename}</p>
+                                </div>`;
+                        } else if (data.type === 'audio') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="fas fa-music fa-5x text-primary mb-3"></i>
+                                        <h5>${filename}</h5>
+                                    </div>
+                                    <audio controls class="w-100" style="max-width: 500px;">
+                                        <source src="${data.url}" type="audio/mpeg">
+                                        <source src="${data.url}" type="audio/wav">
+                                        <source src="${data.url}" type="audio/ogg">
+                                        Trình duyệt của bạn không hỗ trợ audio HTML5.
+                                    </audio>
+                                    <p class="mt-3 text-muted">🎵 File âm thanh</p>
+                                </div>`;
+                        } else if (data.type === 'text') {
+                            // Tải nội dung text file
+                            fetch(data.url)
+                                .then(response => response.text())
+                                .then(textContent => {
+                                    content.innerHTML = `
+                                        <div class="text-start">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h6 class="mb-0">📝 ${filename}</h6>
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('${textContent.replace(/'/g, "\\'")}')">
+                                                    <i class="fas fa-copy me-1"></i>Sao chép
+                                                </button>
+                                            </div>
+                                            <pre class="bg-light p-3 rounded border" style="max-height: 500px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem;">${textContent}</pre>
+                                        </div>`;
+                                })
+                                .catch(error => {
+                                    content.innerHTML = `
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Không thể tải nội dung file text. 
+                                            <a href="${data.url}" target="_blank" class="btn btn-primary ms-2">
+                                                <i class="fas fa-external-link-alt me-1"></i>Mở trong tab mới
+                                            </a>
+                                        </div>`;
+                                });
+                        } else if (data.type === 'office') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <div class="mb-4">
+                                        <i class="fas fa-file-word fa-5x text-primary mb-3"></i>
+                                        <h5>${filename}</h5>
+                                        <p class="text-muted">File Microsoft Office</p>
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Các tùy chọn xem file Office:</h6>
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                            <a href="${data.url}" class="btn btn-primary" target="_blank">
+                                                <i class="fas fa-external-link-alt me-1"></i>Xem đầy đủ
+                                            </a>
+                                            <button class="btn btn-outline-success" onclick="openOfficeOnline('${data.url}', '${filename}')">
+                                                <i class="fas fa-cloud me-1"></i>Office Online
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="openGoogleDocs('${data.url}', '${filename}')">
+                                                <i class="fab fa-google me-1"></i>Google Docs
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <small class="text-muted">
+                                            Lưu ý: Một số dịch vụ online có thể yêu cầu file được lưu trữ công khai
+                                        </small>
+                                    </div>
+                                </div>`;
+                        } else if (data.type === 'svg') {
+                            content.innerHTML = `
+                                <div class="text-center">
+                                    <object data="${data.url}" type="image/svg+xml" class="rounded shadow" style="max-width: 100%; max-height: 70vh;">
+                                        <img src="${data.url}" alt="${filename}" class="img-fluid">
+                                    </object>
+                                    <p class="mt-3 text-muted">🎨 ${filename}</p>
+                                </div>`;
+                        } else {
+                            content.innerHTML = `<div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Không thể xem trước file này. 
+                                <a href="/download/${emailId}/${encodeURIComponent(filename)}" class="btn btn-primary ms-2">
+                                    <i class="fas fa-download me-1"></i>Tải xuống
+                                </a>
+                            </div>`;
+                        }
+                    } else {
+                        content.innerHTML = `<div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Không thể tải file: ${data.message}
+                        </div>`;
+                    }
+                })
+                .catch(error => {
+                    content.innerHTML = `<div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Lỗi khi tải file: ${error.message}
+                    </div>`;
+                });
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                showNotification('Đã sao chép nội dung vào clipboard!', 'success');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+                showNotification('Không thể sao chép. Hãy thử chọn và copy thủ công.', 'error');
+            });
+        }
+
+        // Open with Office Online
+        function openOfficeOnline(fileUrl, filename) {
+            const fullUrl = window.location.origin + fileUrl;
+            const officeUrl = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(fullUrl);
+            window.open(officeUrl, '_blank');
+        }
+
+        // Open with Google Docs
+        function openGoogleDocs(fileUrl, filename) {
+            const fullUrl = window.location.origin + fileUrl;
+            const googleUrl = 'https://docs.google.com/viewer?url=' + encodeURIComponent(fullUrl);
+            window.open(googleUrl, '_blank');
+        }
+
+        // Toggle fullscreen for preview modal
+        function toggleFullscreen() {
+            const modal = document.querySelector('#previewModal .modal-dialog');
+            if (modal.classList.contains('modal-fullscreen')) {
+                modal.classList.remove('modal-fullscreen');
+                modal.classList.add('modal-xl');
+            } else {
+                modal.classList.remove('modal-xl');
+                modal.classList.add('modal-fullscreen');
+            }
+        }
+
+        // Reset database function
+        async function resetDatabase() {
+            if (confirm('Bạn có chắc muốn làm mới toàn bộ dữ liệu? Hành động này sẽ xóa tất cả email hiện có.')) {
+                try {
+                    const response = await fetch('/reset-database', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Database đã được reset thành công!');
+                        window.location.href = '/';
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Lỗi khi reset database');
+                }
+            }
+        }
+
+        // Check provider status
+        function checkProviderStatus() {
+            window.location.href = '/provider-status';
+        }
+
+        // Check emails function
+        async function checkEmails() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang đồng bộ...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/check-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`Thành công! Đã đồng bộ ${result.newEmails} email mới, ${result.newAttachments} file đính kèm`, 'success');
+                    // Optionally reload to show new emails
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Lỗi khi đồng bộ email', 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        // ==================== DISCUSSIONS FUNCTIONS ====================
+
+        // Submit discussion form
+        document.getElementById('discussionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const messageTextarea = document.getElementById('discussionMessage');
+            const message = messageTextarea.value.trim();
+            
+            if (!message) {
+                showNotification('Vui lòng nhập nội dung thảo luận', 'error');
+                return;
+            }
+            
+            const emailId = '<%= email.id %>';
+            
+            try {
+                const response = await fetch('/add-discussion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailId: emailId, message: message })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Thảo luận đã được thêm thành công!', 'success');
+                    messageTextarea.value = '';
+                    // Reload discussions
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Lỗi khi thêm thảo luận', 'error');
+            }
+        });
+
+        // Ctrl+Enter to submit
+        document.getElementById('discussionMessage').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                document.getElementById('discussionForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Edit discussion handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('edit-discussion-btn') || e.target.closest('.edit-discussion-btn')) {
+                const btn = e.target.classList.contains('edit-discussion-btn') ? e.target : e.target.closest('.edit-discussion-btn');
+                const discussionId = btn.dataset.id;
+                const currentMessage = btn.dataset.message;
+                editDiscussion(discussionId, currentMessage);
+            }
+            
+            if (e.target.classList.contains('delete-discussion-btn') || e.target.closest('.delete-discussion-btn')) {
+                const btn = e.target.classList.contains('delete-discussion-btn') ? e.target : e.target.closest('.delete-discussion-btn');
+                const discussionId = btn.dataset.id;
+                deleteDiscussion(discussionId);
+            }
+        });
+
+        // Edit discussion function
+        async function editDiscussion(discussionId, currentMessage) {
+            const newMessage = prompt('Chỉnh sửa thảo luận:', currentMessage);
+            if (newMessage === null || newMessage.trim() === '') return;
+            
+            try {
+                const response = await fetch('/update-discussion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ discussionId: discussionId, message: newMessage.trim() })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Thảo luận đã được cập nhật!', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Lỗi khi cập nhật thảo luận', 'error');
+            }
+        }
+
+        // Delete discussion function
+        async function deleteDiscussion(discussionId) {
+            if (!confirm('Bạn có chắc muốn xóa thảo luận này?')) return;
+            
+            try {
+                const response = await fetch('/delete-discussion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ discussionId: discussionId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Thảo luận đã được xóa!', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Lỗi khi xóa thảo luận', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+        
+        // Task Assignment Functions
+        async function assignTask(employeeId) {
+            const emailId = '<%= email.id %>';
+            
+            // If called from dropdown, get the employeeId from parameter
+            // If called from main assign button, get from select
+            if (!employeeId) {
+                const selectElement = document.getElementById('assignUserSelect');
+                employeeId = selectElement ? selectElement.value : null;
+            }
+            
+            if (!employeeId) {
+                showNotification('Vui lòng chọn nhân viên', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/assign-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        emailId: emailId,
+                        employeeId: employeeId 
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error assigning task:', error);
+                showNotification('Có lỗi xảy ra khi giao nhiệm vụ', 'error');
+            }
+        }
+        
+        async function unassignTask() {
+            const emailId = '<%= email.id %>';
+            
+            if (!confirm('Bạn có chắc chắn muốn hủy giao nhiệm vụ này?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/unassign-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailId: emailId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error unassigning task:', error);
+                showNotification('Có lỗi xảy ra khi hủy giao nhiệm vụ', 'error');
+            }
+        }
+        
+        async function startTask() {
+            const emailId = '<%= email.id %>';
+            
+            try {
+                const response = await fetch('/start-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailId: emailId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error starting task:', error);
+                showNotification('Có lỗi xảy ra khi bắt đầu nhiệm vụ', 'error');
+            }
+        }
+        
+        async function completeTask() {
+            const emailId = '<%= email.id %>';
+            
+            if (!confirm('Bạn có chắc chắn đã hoàn thành nhiệm vụ này?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/complete-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ emailId: emailId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showNotification(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error completing task:', error);
+                showNotification('Có lỗi xảy ra khi hoàn thành nhiệm vụ', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

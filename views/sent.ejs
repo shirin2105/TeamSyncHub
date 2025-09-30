@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-gray: #1f2937;
+            --secondary-gray: #374151;
+            --light-gray: #f9fafb;
+            --medium-gray: #6b7280;
+            --border-gray: #e5e7eb;
+            --hover-gray: #f3f4f6;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            height: 64px;
+            border: none;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            border: none;
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            width: 280px;
+            padding: 24px 0;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: #d1d5db;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-radius: 0;
+            margin: 2px 12px;
+            width: calc(100% - 24px);
+        }
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .email-row {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .email-row:hover {
+            background-color: rgba(59, 130, 246, 0.05) !important;
+            transform: translateX(4px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            border: none;
+            border-radius: 16px 16px 0 0 !important;
+            font-weight: 600;
+            padding: 20px 24px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: none;
+        }
+
+        .table td, .table th {
+            vertical-align: middle;
+            border-color: var(--border-gray);
+            padding: 12px 8px;
+            font-size: 0.9em;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-light {
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .text-muted {
+            color: var(--text-light) !important;
+        }
+
+        .badge {
+            font-size: 0.75em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1050;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+        }
+
+        .email-unread {
+            font-weight: bold;
+        }
+        .doc-info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .email-content {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .attachment-info {
+            color: #6c757d;
+            text-align: center;
+        }
+        .attachment-count {
+            font-size: 0.8em;
+            color: #0d6efd;
+        }
+        .email-type-badge {
+            font-size: 0.8em;
+        }
+        .badge {
+            font-size: 0.75em;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main-content {
+                margin-left: 200px;
+            }
+        }
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <button class="navbar-toggler d-md-none" type="button" onclick="toggleSidebar()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <% if (user) { %>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i><%= user.name || user.email %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu-section">
+            <a href="/" class="menu-item">
+                <i class="fas fa-inbox"></i>Hộp thư đến
+            </a>
+            <a href="/sent" class="menu-item active">
+                <i class="fas fa-paper-plane"></i>Thư đã gửi
+            </a>
+            <a href="/compose" class="menu-item">
+                <i class="fas fa-edit"></i>Soạn thư mới
+            </a>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 16px 24px;"></div>
+            <button class="menu-item" onclick="resetDatabase()">
+                <i class="fas fa-database"></i>Làm mới dữ liệu
+            </button>
+            <button class="menu-item" onclick="checkProviderStatus()">
+                <i class="fas fa-server"></i>Trạng thái hệ thống
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h2>Emails Đã Gửi</h2>
+                        <p class="text-muted">Tổng cộng: <%= emails.length %> email đã gửi</p>
+                    </div>
+                    <button class="btn btn-outline-primary" onclick="syncSentEmails()">
+                        <i class="fas fa-sync-alt me-1"></i>Đồng bộ Sent Emails
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Loại</th>
+                                <th>Người nhận</th>
+                                <th>Chủ đề</th>
+                                <th>Thời gian gửi</th>
+                                <th>Văn bản</th>
+                                <th>File đính kèm</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (emails.length === 0) { %>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="fas fa-paper-plane fa-3x mb-3"></i>
+                                        <br>Chưa có email nào được gửi
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <% emails.forEach(function(email) { %>
+                                    <tr class="email-row" onclick="window.location.href='/email/<%= email.id %>'">
+                                        <td>
+                                            <span class="badge bg-primary email-type-badge">
+                                                <i class="fas fa-arrow-up me-1"></i>Đã gửi
+                                            </span>
+                                        </td>
+                                        <td><%= email.recipient %></td>
+                                        <td>
+                                            <%= email.subject || '(Không có chủ đề)' %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(email.sent_datetime).toLocaleString('vi-VN') %>
+                                        </td>
+                                        <td>
+                                            <!-- Tags column removed -->
+                                        </td>
+                                        <td class="attachment-info">
+                                            <% if (email.attachment_count && email.attachment_count > 0) { %>
+                                                <i class="fas fa-paperclip"></i>
+                                                <div class="attachment-count"><%= email.attachment_count %></div>
+                                            <% } else { %>
+                                                <span class="text-muted">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <a href="/email/<%= email.id %>" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i>Xem
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        async function checkEmails() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang kiểm tra...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/check-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Lỗi khi kiểm tra email');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function resetDatabase() {
+            if (confirm('Bạn có chắc chắn muốn reset database? Tất cả dữ liệu sẽ bị xóa!')) {
+                try {
+                    const response = await fetch('/reset-database', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert('Database đã được reset thành công!');
+                        window.location.reload();
+                    } else {
+                        alert('Lỗi: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Lỗi khi reset database');
+                }
+            }
+        }
+
+        async function syncSentEmails() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang đồng bộ...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/sync-sent-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Thành công: ' + result.message);
+                    window.location.reload();
+                } else {
+                    alert('Lỗi: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Lỗi khi đồng bộ sent emails');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function checkProviderStatus() {
+            window.location.href = '/provider-status';
+        }
+    </script>
+</body>
+</html>

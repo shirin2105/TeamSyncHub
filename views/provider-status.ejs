@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Status - TeamSync Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            height: 64px;
+            border: none;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        body {
+            background-color: #f9fafb;
+            padding-top: 80px;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        .status-card {
+            transition: all 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .provider-available {
+            border-left: 4px solid #28a745;
+        }
+        .provider-unavailable {
+            border-left: 4px solid #dc3545;
+        }
+        .provider-warning {
+            border-left: 4px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>User
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row mb-4">
+                <div class="col">
+                    <h2 class="mb-0">📊 Email Provider Status</h2>
+                    <p class="text-muted">Kiểm tra trạng thái các nhà cung cấp email</p>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" onclick="refreshStatus()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Đang kiểm tra trạng thái providers...</p>
+            </div>
+
+            <!-- Provider Status Cards -->
+            <div id="status-container" class="row" style="display: none;">
+                <!-- Microsoft Graph Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card status-card h-100" id="graph-card">
+                        <div class="card-header d-flex align-items-center">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Microsoft_logo.svg/1024px-Microsoft_logo.svg.png" width="24" height="24" class="me-2">
+                            <h5 class="mb-0">Microsoft Graph API</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="graph-status" class="mb-3">
+                                <span class="badge bg-secondary">Checking...</span>
+                            </div>
+                            <p class="card-text">
+                                <strong>Mô tả:</strong> API chính thức của Microsoft Office 365<br>
+                                <strong>Ưu điểm:</strong> Tích hợp native, không giới hạn<br>
+                                <strong>Nhược điểm:</strong> Bị chặn IP tại Việt Nam
+                            </p>
+                            <div id="graph-error" class="alert alert-danger" style="display: none;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SendGrid Card -->
+                <div class="col-md-6 mb-4">
+                    <div class="card status-card h-100" id="sendgrid-card">
+                        <div class="card-header d-flex align-items-center">
+                            <img src="https://sendgrid.com/wp-content/themes/sgdotcom/pages/resource/brand/2016/SendGrid-Logomark.png" width="24" height="24" class="me-2">
+                            <h5 class="mb-0">SendGrid</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="sendgrid-status" class="mb-3">
+                                <span class="badge bg-secondary">Checking...</span>
+                            </div>
+                            <p class="card-text">
+                                <strong>Mô tả:</strong> Email delivery service của Twilio<br>
+                                <strong>Ưu điểm:</strong> Không bị chặn IP, đáng tin cậy<br>
+                                <strong>Nhược điểm:</strong> Giới hạn 100 emails/day (free)
+                            </p>
+                            <div id="sendgrid-error" class="alert alert-danger" style="display: none;"></div>
+                            <div id="sendgrid-setup" class="alert alert-info" style="display: none;">
+                                <strong>Cần setup:</strong> 
+                                <a href="#" onclick="setupSendGrid()" class="btn btn-sm btn-primary ms-2">Setup SendGrid</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Card -->
+            <div id="summary-card" class="card mt-4" style="display: none;">
+                <div class="card-header">
+                    <h5 class="mb-0">📋 Tóm tắt</h5>
+                </div>
+                <div class="card-body">
+                    <div id="summary-content"></div>
+                </div>
+            </div>
+
+            <!-- Setup Guides -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">🔧 Quick Setup</h6>
+                        </div>
+                        <div class="card-body">
+                            <button class="btn btn-outline-primary me-2 mb-2" onclick="setupSendGrid()">
+                                Setup SendGrid
+                            </button>
+                            <button class="btn btn-outline-secondary me-2 mb-2" onclick="testMobileHotspot()">
+                                Test Mobile Hotspot
+                            </button>
+                            <button class="btn btn-outline-info mb-2" onclick="checkIP()">
+                                Check Current IP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">📖 Documentation</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><a href="#" onclick="openGuide('sendgrid')">SendGrid Setup Guide</a></li>
+                                <li><a href="#" onclick="openGuide('mobile')">Mobile Hotspot Guide</a></li>
+                                <li><a href="#" onclick="openGuide('troubleshoot')">Troubleshooting</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let statusData = null;
+
+        // Load status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStatus();
+        });
+
+        async function refreshStatus() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('status-container').style.display = 'none';
+            document.getElementById('summary-card').style.display = 'none';
+
+            try {
+                const response = await fetch('/provider-status');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusData = data.providers;
+                    updateStatusDisplay();
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching status:', error);
+                alert('Lỗi khi kiểm tra status: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('status-container').style.display = 'flex';
+                document.getElementById('summary-card').style.display = 'block';
+            }
+        }
+
+        function updateStatusDisplay() {
+            // Update Microsoft Graph
+            const graphCard = document.getElementById('graph-card');
+            const graphStatus = document.getElementById('graph-status');
+            const graphError = document.getElementById('graph-error');
+
+            if (statusData.microsoftGraph.available) {
+                graphCard.className = 'card status-card h-100 provider-available';
+                graphStatus.innerHTML = '<span class="badge bg-success">✅ Available</span>';
+                graphError.style.display = 'none';
+            } else {
+                graphCard.className = 'card status-card h-100 provider-unavailable';
+                graphStatus.innerHTML = '<span class="badge bg-danger">❌ Unavailable</span>';
+                graphError.innerHTML = '<strong>Error:</strong> ' + statusData.microsoftGraph.error;
+                graphError.style.display = 'block';
+            }
+
+            // Update SendGrid
+            const sendgridCard = document.getElementById('sendgrid-card');
+            const sendgridStatus = document.getElementById('sendgrid-status');
+            const sendgridError = document.getElementById('sendgrid-error');
+            const sendgridSetup = document.getElementById('sendgrid-setup');
+
+            if (statusData.sendGrid.available) {
+                sendgridCard.className = 'card status-card h-100 provider-available';
+                sendgridStatus.innerHTML = '<span class="badge bg-success">✅ Available</span>';
+                sendgridError.style.display = 'none';
+                sendgridSetup.style.display = 'none';
+            } else {
+                if (statusData.sendGrid.error.includes('Not configured')) {
+                    sendgridCard.className = 'card status-card h-100 provider-warning';
+                    sendgridStatus.innerHTML = '<span class="badge bg-warning">⚠️ Not Configured</span>';
+                    sendgridSetup.style.display = 'block';
+                    sendgridError.style.display = 'none';
+                } else {
+                    sendgridCard.className = 'card status-card h-100 provider-unavailable';
+                    sendgridStatus.innerHTML = '<span class="badge bg-danger">❌ Error</span>';
+                    sendgridError.innerHTML = '<strong>Error:</strong> ' + statusData.sendGrid.error;
+                    sendgridError.style.display = 'block';
+                    sendgridSetup.style.display = 'none';
+                }
+            }
+
+            // Update summary
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summaryContent = document.getElementById('summary-content');
+            let html = '';
+
+            const availableCount = (statusData.microsoftGraph.available ? 1 : 0) + (statusData.sendGrid.available ? 1 : 0);
+
+            if (availableCount === 2) {
+                html = '<div class="alert alert-success"><strong>🎉 Tuyệt vời!</strong> Cả hai providers đều hoạt động. Email sẽ được gửi qua Microsoft Graph, fallback sang SendGrid nếu cần.</div>';
+            } else if (availableCount === 1) {
+                if (statusData.sendGrid.available) {
+                    html = '<div class="alert alert-warning"><strong>⚠️ Lưu ý:</strong> Chỉ SendGrid hoạt động. Microsoft Graph bị chặn IP. Emails sẽ được gửi qua SendGrid.</div>';
+                } else {
+                    html = '<div class="alert alert-info"><strong>ℹ️ Thông tin:</strong> Chỉ Microsoft Graph hoạt động. Có thể gặp vấn đề IP blocking.</div>';
+                }
+            } else {
+                html = '<div class="alert alert-danger"><strong>❌ Cảnh báo:</strong> Không có provider nào hoạt động. Không thể gửi email.</div>';
+            }
+
+            summaryContent.innerHTML = html;
+        }
+
+        function setupSendGrid() {
+            if (confirm('Mở hướng dẫn setup SendGrid?')) {
+                window.open('sendgrid-setup-guide.md', '_blank');
+            }
+        }
+
+        function testMobileHotspot() {
+            if (confirm('Chạy test mobile hotspot? (Cần kết nối mobile hotspot trước)')) {
+                fetch('/test-mobile-hotspot')
+                    .then(response => response.json())
+                    .then(data => alert(data.message))
+                    .catch(error => alert('Error: ' + error.message));
+            }
+        }
+
+        function checkIP() {
+            window.open('/check-ip', '_blank');
+        }
+
+        function openGuide(type) {
+            const guides = {
+                'sendgrid': 'sendgrid-setup-guide.md',
+                'mobile': 'mobile-hotspot-guide.bat',
+                'troubleshoot': '#'
+            };
+            
+            if (guides[type] !== '#') {
+                window.open(guides[type], '_blank');
+            }
+        }
+        
+        // Function for check emails button
+        function checkEmails() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>

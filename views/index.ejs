@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-gray: #1f2937;
+            --secondary-gray: #374151;
+            --light-gray: #f9fafb;
+            --medium-gray: #6b7280;
+            --border-gray: #e5e7eb;
+            --hover-gray: #f3f4f6;
+            --accent-blue: #3b82f6;
+            --accent-blue-hover: #2563eb;
+            --text-dark: #111827;
+            --text-light: #6b7280;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --danger-red: #ef4444;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            border: none;
+            height: calc(100vh - 64px);
+            position: fixed;
+            left: 0;
+            top: 64px;
+            width: 280px;
+            padding: 24px 0;
+            overflow-y: auto;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 24px;
+            color: #d1d5db;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-radius: 0;
+            margin: 2px 12px;
+            width: calc(100% - 24px);
+        }
+
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .menu-item.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .email-row {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .email-row:hover {
+            background-color: var(--hover-gray);
+            border-left-color: var(--accent-blue);
+            transform: translateX(2px);
+        }
+
+        .email-unread {
+            font-weight: 600;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .doc-info {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+            padding: 20px;
+            border-left: 4px solid var(--accent-blue);
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .email-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-gray);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .attachment-info {
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .attachment-count {
+            font-size: 0.85em;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .email-type-badge {
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .badge {
+            font-size: 0.75em;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+
+        .table {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: none;
+        }
+
+        .table td, .table th {
+            vertical-align: middle;
+            border-color: var(--border-gray);
+            padding: 12px 8px;
+            font-size: 0.9em;
+        }
+
+        /* Column width optimization */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 25%; } /* Người gửi/nhận */
+        .table th:nth-child(2), .table td:nth-child(2) { width: 35%; } /* Chủ đề */
+        .table th:nth-child(3), .table td:nth-child(3) { width: 15%; } /* Thời gian */
+        .table th:nth-child(4), .table td:nth-child(4) { width: 10%; } /* Đính kèm */
+        .table th:nth-child(5), .table td:nth-child(5) { width: 15%; } /* Nhiệm vụ */
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75em;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-gray) 0%, var(--secondary-gray) 100%) !important;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            height: 64px;
+            border: none;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-light {
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-light:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+        }
+
+        h2 {
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .text-muted {
+            color: var(--text-light) !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--hover-gray);
+            transform: translateX(2px);
+        }
+
+        @media (max-width: 1200px) {
+            /* Responsive adjustments */
+        }
+
+        @media (max-width: 992px) {
+            .table th:nth-child(3), .table td:nth-child(3) { display: none; } /* Ẩn cột thời gian */
+            .table th:nth-child(5), .table td:nth-child(5) { display: none; } /* Ẩn cột nhiệm vụ */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+                padding: 20px;
+            }
+            
+            .table {
+                font-size: 0.8em;
+            }
+            
+            .table td, .table th {
+                padding: 8px 4px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1050;
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+            
+            /* Mobile table optimization */
+            .table th:nth-child(4), .table td:nth-child(4) { display: none; } /* Ẩn cột đính kèm */
+            
+            .avatar {
+                width: 24px;
+                height: 24px;
+                font-size: 10px;
+            }
+            
+            .email-subject {
+                font-size: 0.8em;
+            }
+            
+            .user-name {
+                font-size: 0.75em;
+            }
+        }
+
+        /* Loading spinner */
+        .spinner-border-sm {
+            color: var(--accent-blue);
+        }
+
+        /* Status badges */
+        .badge-success {
+            background-color: var(--success-green);
+        }
+        .badge-warning {
+            background-color: var(--warning-yellow);
+        }
+        .badge-danger {
+            background-color: var(--danger-red);
+        }
+        .badge-secondary {
+            background-color: var(--medium-gray);
+        }
+
+        /* Email row styling */
+        .email-row {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .email-row:hover {
+            background-color: rgba(59, 130, 246, 0.05) !important;
+            transform: translateX(4px);
+        }
+
+        .email-unread {
+            background-color: rgba(59, 130, 246, 0.02);
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 8px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .email-subject {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .email-preview {
+            font-size: 0.75em;
+            line-height: 1.3;
+            color: var(--text-light);
+        }
+
+        .email-date {
+            font-size: 0.8em;
+            font-weight: 500;
+            color: var(--text-medium);
+            white-space: nowrap;
+        }
+
+        .email-body-preview {
+            font-size: 0.8em;
+            color: var(--text-medium);
+            line-height: 1.4;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 150px;
+        }
+
+        /* Compact badge styling */
+        .badge {
+            font-size: 0.65em;
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .user-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 0.85em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .user-role {
+            font-size: 0.7em;
+            color: var(--text-light);
+        }
+
+        .attachment-info {
+            text-align: center;
+        }
+
+        /* Badge styling */
+        .badge-incoming {
+            background: linear-gradient(135deg, var(--success-green), #16a34a);
+            color: white;
+            border: none;
+        }
+
+        .badge-outgoing {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-hover));
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <button class="navbar-toggler d-md-none" type="button" onclick="toggleSidebar()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <% if (user) { %>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i><%= user.name || user.email %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="menu-section">
+            <a href="/" class="menu-item active">
+                <i class="fas fa-inbox"></i>Hộp thư đến
+            </a>
+            <a href="/sent" class="menu-item">
+                <i class="fas fa-paper-plane"></i>Thư đã gửi
+            </a>
+            <a href="/compose" class="menu-item">
+                <i class="fas fa-edit"></i>Soạn thư mới
+            </a>
+            <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 16px 24px;"></div>
+            <button class="menu-item" onclick="resetDatabase()">
+                <i class="fas fa-database"></i>Làm mới dữ liệu
+            </button>
+            <button class="menu-item" onclick="checkProviderStatus()">
+                <i class="fas fa-server"></i>Trạng thái hệ thống
+            </button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i><%= success %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-0">
+                            <i class="fas fa-envelope me-1"></i>
+                            Tổng cộng: <strong><%= emails.length %></strong> email
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+                
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user me-1"></i>Người gửi/nhận</th>
+                                <th><i class="fas fa-subject me-1"></i>Chủ đề</th>
+                                <th><i class="fas fa-clock me-1"></i>Thời gian</th>
+                                <th><i class="fas fa-paperclip"></i></th>
+                                <th><i class="fas fa-tasks me-1"></i>Nhiệm vụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (emails.length === 0) { %>
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        <i class="fas fa-inbox fa-4x"></i>
+                                        <h5 class="mt-3 mb-2">Chưa có email nào</h5>
+                                        <p class="text-muted">Email sẽ xuất hiện ở đây khi có thư mới đến</p>
+                                        <button class="btn btn-primary" onclick="checkEmails()">
+                                            <i class="fas fa-sync-alt me-1"></i>Kiểm tra email ngay
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <% emails.forEach(function(email) { %>
+                                    <tr class="email-row <%= email.is_read ? '' : 'email-unread' %>" 
+                                        onclick="window.location.href='/email/<%= email.id %>'">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar">
+                                                    <% if (email.email_type === 'incoming') { %>
+                                                        <i class="fas fa-arrow-down"></i>
+                                                    <% } else { %>
+                                                        <i class="fas fa-arrow-up"></i>
+                                                    <% } %>
+                                                </div>
+                                                <div class="user-info">
+                                                    <div class="user-name">
+                                                        <% if (email.email_type === 'incoming') { %>
+                                                            <%= (email.sender || 'Không xác định').substring(0, 25) + ((email.sender || '').length > 25 ? '...' : '') %>
+                                                        <% } else { %>
+                                                            <%= (email.recipient || 'Không xác định').substring(0, 25) + ((email.recipient || '').length > 25 ? '...' : '') %>
+                                                        <% } %>
+                                                    </div>
+                                                    <small class="user-role">
+                                                        <%= email.email_type === 'incoming' ? 'Gửi' : 'Nhận' %>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="email-subject" title="<%= email.subject || 'Không có tiêu đề' %>">
+                                                <%= (email.subject || 'Không có tiêu đề').substring(0, 30) + ((email.subject || '').length > 30 ? '...' : '') %>
+                                            </div>
+                                            <% if (email.body_preview) { %>
+                                                <small class="email-preview">
+                                                    <%= email.body_preview.substring(0, 25) + (email.body_preview.length > 25 ? '...' : '') %>
+                                                </small>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="email-date">
+                                                <% if (email.email_type === 'incoming') { %>
+                                                    <%= new Date(email.received_datetime).toLocaleDateString('vi-VN', {
+                                                        month: '2-digit',
+                                                        day: '2-digit',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) %>
+                                                <% } else { %>
+                                                    <%= new Date(email.sent_datetime).toLocaleDateString('vi-VN', {
+                                                        month: '2-digit',
+                                                        day: '2-digit',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    }) %>
+                                                <% } %>
+                                            </div>
+                                        </td>
+                                        <td class="attachment-info">
+                                            <% if (email.attachment_count && email.attachment_count > 0) { %>
+                                                <span class="badge bg-success">
+                                                    <%= email.attachment_count %>
+                                                </span>
+                                            <% } else { %>
+                                                <span class="text-muted">
+                                                    <i class="fas fa-times"></i>
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (email.assigned_to_name) { %>
+                                                <div>
+                                                    <span class="badge bg-light text-dark">
+                                                        <%= email.assigned_to_name.substring(0, 8) + (email.assigned_to_name.length > 8 ? '...' : '') %>
+                                                    </span>
+                                                    <% if (email.task_status) { %>
+                                                        <div class="mt-1">
+                                                            <% if (email.task_status === 'pending') { %>
+                                                                <span class="badge bg-warning">Chờ</span>
+                                                            <% } else if (email.task_status === 'in_progress') { %>
+                                                                <span class="badge bg-info">Làm</span>
+                                                            <% } else if (email.task_status === 'completed') { %>
+                                                                <span class="badge bg-success">Xong</span>
+                                                            <% } %>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            <% } else { %>
+                                                <span class="text-muted">
+                                                    <i class="fas fa-minus"></i>
+                                                </span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        async function checkEmails() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Đang kiểm tra...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/check-emails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    showNotification('Đã kiểm tra email thành công!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error checking emails:', error);
+                showNotification('Có lỗi xảy ra khi kiểm tra email', 'error');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function resetDatabase() {
+            if (!confirm('Bạn có chắc muốn xóa toàn bộ dữ liệu email?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/reset-database', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Đã reset database thành công!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification('Lỗi: ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Error resetting database:', error);
+                showNotification('Có lỗi xảy ra khi reset database', 'error');
+            }
+        }
+
+        function checkProviderStatus() {
+            window.location.href = '/provider-status';
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+            notification.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px;';
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Smooth scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add scroll to top button
+        window.addEventListener('scroll', function() {
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (!scrollBtn) {
+                const btn = document.createElement('button');
+                btn.id = 'scrollTopBtn';
+                btn.className = 'btn btn-primary position-fixed';
+                btn.style.cssText = 'bottom: 20px; right: 20px; z-index: 999; border-radius: 50%; width: 50px; height: 50px; opacity: 0; transition: opacity 0.3s ease;';
+                btn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                btn.onclick = scrollToTop;
+                document.body.appendChild(btn);
+            }
+            
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (window.pageYOffset > 300) {
+                scrollTopBtn.style.opacity = '1';
+            } else {
+                scrollTopBtn.style.opacity = '0';
+            }
+        });
+    </script>
+</body>
+</html>

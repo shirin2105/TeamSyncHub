@@ -1,0 +1,307 @@
+const db = require('../config/database');
+
+class TaskService {
+    // Giao task cho user
+    static assignTask(emailId, assignedToUserId, assignedByUserId, status = 'pending') {
+        return new Promise((resolve, reject) => {
+            // Lấy thông tin user được giao nhiệm vụ
+            db.get('SELECT name FROM users WHERE id = ?', [assignedToUserId], (err, assignedUser) => {
+                if (err) return reject(err);
+                if (!assignedUser) return reject(new Error('User không tồn tại'));
+                
+                // Lấy thông tin user giao nhiệm vụ
+                db.get('SELECT name FROM users WHERE id = ?', [assignedByUserId], (err, assignerUser) => {
+                    if (err) return reject(err);
+                    if (!assignerUser) return reject(new Error('User không tồn tại'));
+                    
+                    const query = `
+                        UPDATE emails 
+                        SET assigned_to_id = ?, assigned_to_name = ?, 
+                            assigned_by_id = ?, assigned_by_name = ?, 
+                            assigned_at = CURRENT_TIMESTAMP, task_status = ?
+                        WHERE id = ?
+                    `;
+                    
+                    db.run(query, [
+                        assignedToUserId, 
+                        assignedUser.name,
+                        assignedByUserId,
+                        assignerUser.name,
+                        status, 
+                        emailId
+                    ], function(err) {
+                if (err) {
+                    console.error('Error assigning task:', err);
+                    reject(err);
+                } else {
+                    resolve({ 
+                        emailId,
+                        assignedTo: assignedToUserId,
+                        assignedBy: assignedByUserId,
+                        status,
+                        updated: this.changes > 0 
+                    });
+                }
+            });
+        });
+    }
+
+    // Cập nhật trạng thái task
+    static updateTaskStatus(emailId, newStatus, userId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE emails 
+                SET task_status = ?
+                WHERE id = ? AND assigned_to = ?
+            `;
+            
+            db.run(query, [newStatus, emailId, userId], function(err) {
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    reject(new Error('Task not found or no permission to update'));
+                } else {
+                    resolve({ updated: true, status: newStatus });
+                }
+            });
+        });
+    }
+
+    // Admin change task status with special logic
+    static adminChangeTaskStatus(emailId, newStatus, adminId, assignedUserId = null) {
+        return new Promise((resolve, reject) => {
+            console.log(`🔄 Admin changing task status for email ${emailId} to ${newStatus}`);
+            
+            // Validate status
+            const validStatuses = ['pending', 'in_progress', 'completed'];
+            if (!validStatuses.includes(newStatus)) {
+                return reject(new Error('Invalid task status'));
+            }
+            
+            // Special logic for in_progress - must assign to someone
+            if (newStatus === 'in_progress') {
+                if (!assignedUserId) {
+                    return reject(new Error('Task must be assigned to someone when setting to in_progress'));
+                }
+                
+                // Verify assigned user exists
+                db.get('SELECT id, name FROM users WHERE id = ?', [assignedUserId], (err, user) => {
+                    if (err) return reject(err);
+                    if (!user) return reject(new Error('Assigned user not found'));
+                    
+                    // Update with assignment
+                    const query = `
+                        UPDATE emails 
+                        SET task_status = ?, assigned_to = ?, assigned_by = ?, assigned_at = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    `;
+                    
+                    db.run(query, [newStatus, assignedUserId, adminId, emailId], function(err) {
+                        if (err) {
+                            reject(err);
+                        } else if (this.changes === 0) {
+                            reject(new Error('Email not found'));
+                        } else {
+                            console.log(`✅ Task set to in_progress and assigned to user ${assignedUserId}`);
+                            resolve({ 
+                                updated: true, 
+                                status: newStatus, 
+                                assignedTo: assignedUserId,
+                                assignedToName: user.name
+                            });
+                        }
+                    });
+                });
+            } 
+            // Special logic for pending - remove assignment
+            else if (newStatus === 'pending') {
+                const query = `
+                    UPDATE emails 
+                    SET task_status = ?, assigned_to = NULL, assigned_by = NULL, assigned_at = NULL
+                    WHERE id = ?
+                `;
+                
+                db.run(query, [newStatus, emailId], function(err) {
+                    if (err) {
+                        reject(err);
+                    } else if (this.changes === 0) {
+                        reject(new Error('Email not found'));
+                    } else {
+                        console.log(`✅ Task set to pending and assignment removed`);
+                        resolve({ 
+                            updated: true, 
+                            status: newStatus,
+                            unassigned: true
+                        });
+                    }
+                });
+            }
+            // For completed - just update status
+            else if (newStatus === 'completed') {
+                const query = `
+                    UPDATE emails 
+                    SET task_status = ?
+                    WHERE id = ?
+                `;
+                
+                db.run(query, [newStatus, emailId], function(err) {
+                    if (err) {
+                        reject(err);
+                    } else if (this.changes === 0) {
+                        reject(new Error('Email not found'));
+                    } else {
+                        console.log(`✅ Task marked as completed`);
+                        resolve({ 
+                            updated: true, 
+                            status: newStatus
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    // Employee complete their assigned task
+    static completeTask(emailId, userId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE emails 
+                SET task_status = 'completed'
+                WHERE id = ? AND assigned_to = ?
+            `;
+            
+            db.run(query, [emailId, userId], function(err) {
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    reject(new Error('Task not found or no permission to complete'));
+                } else {
+                    console.log(`✅ Employee ${userId} completed task for email ${emailId}`);
+                    resolve({ completed: true, status: 'completed' });
+                }
+            });
+        });
+    }
+
+    // Lấy danh sách emails có task
+    static getEmailsWithTasks() {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT e.*, 
+                       assigned_user.name as assigned_to_name,
+                       assigned_user.email as assigned_to_email,
+                       assigned_user.avatar_url as assigned_to_avatar,
+                       assigner.name as assigned_by_name,
+                       assigner.email as assigned_by_email
+                FROM emails e
+                LEFT JOIN users assigned_user ON e.assigned_to = assigned_user.id
+                LEFT JOIN users assigner ON e.assigned_by = assigner.id
+                ORDER BY e.received_datetime DESC, e.created_at DESC
+            `;
+            
+            db.all(query, [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows || []);
+                }
+            });
+        });
+    }
+
+    // Lấy emails được giao cho user cụ thể
+    static getTasksAssignedToUser(userId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT e.*, 
+                       assigned_user.name as assigned_to_name,
+                       assigned_user.email as assigned_to_email,
+                       assigner.name as assigned_by_name,
+                       assigner.email as assigned_by_email
+                FROM emails e
+                LEFT JOIN users assigned_user ON e.assigned_to = assigned_user.id
+                LEFT JOIN users assigner ON e.assigned_by = assigner.id
+                WHERE e.assigned_to = ?
+                ORDER BY e.assigned_at DESC
+            `;
+            
+            db.all(query, [userId], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows || []);
+                }
+            });
+        });
+    }
+
+    // Lấy tất cả users để assign task
+    static getAllUsers() {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT id, name, email, role, avatar_url, is_active
+                FROM users 
+                WHERE is_active = 1
+                ORDER BY role DESC, name ASC
+            `;
+            
+            db.all(query, [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows || []);
+                }
+            });
+        });
+    }
+
+    // Kiểm tra xem email có được giao task chưa
+    static isTaskAssigned(emailId, userId = null) {
+        return new Promise((resolve, reject) => {
+            let query = 'SELECT assigned_to, assigned_by, task_status FROM emails WHERE id = ?';
+            let params = [emailId];
+            
+            if (userId) {
+                query += ' AND assigned_to = ?';
+                params.push(userId);
+            }
+            
+            db.get(query, params, (err, row) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve({
+                        isAssigned: !!row?.assigned_to,
+                        assignedTo: row?.assigned_to,
+                        assignedBy: row?.assigned_by,
+                        status: row?.task_status,
+                        canReply: !!row?.assigned_to && (userId ? row.assigned_to === userId : true)
+                    });
+                }
+            });
+        });
+    }
+
+    // Hủy giao task
+    static unassignTask(emailId, userId) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE emails 
+                SET assigned_to = NULL, assigned_by = NULL, assigned_at = NULL, task_status = 'pending'
+                WHERE id = ? AND assigned_by = ?
+            `;
+            
+            db.run(query, [emailId, userId], function(err) {
+                if (err) {
+                    reject(err);
+                } else if (this.changes === 0) {
+                    reject(new Error('Task not found or no permission to unassign'));
+                } else {
+                    resolve({ unassigned: true });
+                }
+            });
+        });
+    }
+}
+
+module.exports = TaskService;

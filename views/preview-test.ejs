@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Preview Features - TeamSync Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .test-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .preview-demo {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 10px 0;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body class="bg-light" style="padding-top: 80px;">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%) !important; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1); height: 64px;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/" style="font-weight: 700; font-size: 1.5rem;">
+                <i class="fas fa-envelope me-2"></i>TeamSync Hub
+            </a>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="checkEmails()">
+                    <i class="fas fa-sync-alt me-1"></i>Đồng bộ Email
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1"></i>User
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-check-circle me-2"></i>Tính năng Preview đã được cải thiện!
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-star me-2"></i>Các cải tiến mới:</h5>
+                            <ul class="mb-0">
+                                <li><strong>Audio Files:</strong> Hỗ trợ MP3, WAV, OGG, M4A, AAC, WMA, FLAC</li>
+                                <li><strong>Video Files:</strong> Hỗ trợ MP4, WEBM, AVI, MOV, WMV, FLV, MKV, M4V</li>
+                                <li><strong>Office Files:</strong> Cải thiện preview DOCX, DOC, PPTX, PPT, XLSX, XLS</li>
+                                <li><strong>Filename Encoding:</strong> Khắc phục lỗi với tên file có ký tự đặc biệt</li>
+                                <li><strong>Better UI:</strong> Giao diện preview đẹp hơn với thông tin chi tiết</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-success status-badge">
+                        <i class="fas fa-check"></i> Working
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-music fa-3x text-primary mb-3"></i>
+                        <h5>Audio Files</h5>
+                        <p class="text-muted">MP3, WAV, OGG, M4A, AAC, WMA, FLAC</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-volume-up fa-2x text-muted mb-2"></i>
+                            <p>HTML5 Audio Player</p>
+                            <small class="text-muted">With fallback support for multiple formats</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-success status-badge">
+                        <i class="fas fa-check"></i> Working
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-video fa-3x text-warning mb-3"></i>
+                        <h5>Video Files</h5>
+                        <p class="text-muted">MP4, WEBM, AVI, MOV, WMV, FLV, MKV, M4V</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-play-circle fa-2x text-muted mb-2"></i>
+                            <p>HTML5 Video Player</p>
+                            <small class="text-muted">Browser-compatible formats with fallback</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-warning status-badge">
+                        <i class="fas fa-exclamation"></i> Limited
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-word fa-3x text-info mb-3"></i>
+                        <h5>Office Files</h5>
+                        <p class="text-muted">DOCX, DOC, PPTX, PPT, XLSX, XLS</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-cloud fa-2x text-muted mb-2"></i>
+                            <p>Office Online / Google Docs</p>
+                            <small class="text-muted">External service dependent</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-success status-badge">
+                        <i class="fas fa-check"></i> Working
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                        <h5>PDF Files</h5>
+                        <p class="text-muted">Portable Document Format</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-file-pdf fa-2x text-muted mb-2"></i>
+                            <p>Browser PDF Viewer</p>
+                            <small class="text-muted">Native browser support</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-success status-badge">
+                        <i class="fas fa-check"></i> Working
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-image fa-3x text-success mb-3"></i>
+                        <h5>Image Files</h5>
+                        <p class="text-muted">JPG, PNG, GIF, BMP, WEBP, SVG</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-image fa-2x text-muted mb-2"></i>
+                            <p>Image Viewer</p>
+                            <small class="text-muted">Full responsive display</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card test-card h-100 position-relative">
+                    <span class="badge bg-success status-badge">
+                        <i class="fas fa-check"></i> Working
+                    </span>
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-3x text-secondary mb-3"></i>
+                        <h5>Text Files</h5>
+                        <p class="text-muted">TXT, MD, JSON, XML, CSS, JS, etc.</p>
+                        <div class="preview-demo">
+                            <i class="fas fa-code fa-2x text-muted mb-2"></i>
+                            <p>Syntax Highlighting</p>
+                            <small class="text-muted">Code formatting with copy support</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bug me-2"></i>Issues Fixed
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-check-circle text-success me-2"></i>Fixed Issues:</h6>
+                                <ul>
+                                    <li>✅ Unicode filename support (Japanese, Vietnamese, etc.)</li>
+                                    <li>✅ Extended audio format support</li>
+                                    <li>✅ Extended video format support</li>
+                                    <li>✅ Better error handling for unsupported formats</li>
+                                    <li>✅ Improved Office file preview options</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-tools text-warning me-2"></i>Technical Details:</h6>
+                                <ul>
+                                    <li>RFC 5987 encoding for Content-Disposition headers</li>
+                                    <li>MIME type detection for media files</li>
+                                    <li>Fallback preview options for Office files</li>
+                                    <li>Enhanced AttachmentService with more formats</li>
+                                    <li>Better frontend JavaScript for preview handling</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <h5><i class="fas fa-rocket me-2"></i>Ready to Test!</h5>
+                        <p class="mb-3">Tất cả các cải tiến đã được triển khai. Hãy thử tính năng preview với các file MP3, MP4, và DOCX trong email!</p>
+                        <a href="/" class="btn btn-light btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Quay lại Email Manager
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function for check emails button
+        function checkEmails() {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
